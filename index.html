@@ -212,6 +212,9 @@
   }
 
   .actions{display:flex;justify-content:center;gap:12px;margin-top:16px}
+  .voice-row{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;width:100%}
+  .btn-listening{animation:pulse 1.1s ease-in-out infinite;}
+  @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
   .btn{
     border:none;border-radius:16px;padding:13px 22px;font-family:inherit;
     font-weight:700;font-size:1.02em;cursor:pointer;transition:transform .1s ease;
@@ -951,7 +954,10 @@ function renderQuiz(){
       <div class="actions" id="quizActions">
         ${quizRevealed
           ? `<button class="btn btn-green btn-big" id="quizContinue" type="button">${curIdx===quizSeq.length-1?'Finito! 🎉':'Continua ➡️'}</button>`
-          : `<button class="btn btn-primary btn-big" id="quizReveal" type="button">Dimmi! 🎤</button>`}
+          : `<div class="voice-row">
+              <button class="btn btn-primary btn-big" id="quizReveal" type="button">Dimmi! 🎤</button>
+              ${voiceSupported ? `<button class="btn btn-green btn-big" id="quizVoice" type="button">🎤 Parla tu!</button>` : ''}
+            </div>`}
       </div>
       <div class="nav-row">
         <button class="btn btn-ghost btn-round" id="qPrev" type="button" ${curIdx===0?'disabled':''}>◀️</button>
@@ -971,6 +977,12 @@ function renderQuiz(){
       $('quizContinue').addEventListener('click', quizContinue);
     });
   }
+
+  // --- voce: Parla tu! (Web Speech Recognition) ---
+  const voiceBtn = $('quizVoice');
+  if(voiceBtn){
+    voiceBtn.addEventListener('click', ()=> startQuizVoice(card));
+  }
   $('quizContinue') && $('quizContinue').addEventListener('click', quizContinue);
   $('qPrev').addEventListener('click', ()=>{
     if(curIdx>0){ curIdx--; renderQuiz(); }
@@ -985,6 +997,112 @@ function quizContinue(){
   } else {
     curIdx++;
     renderQuiz();
+  }
+}
+
+
+/* --- RICONOSCIMENTO VOCALE (quiz Dimmi tu) --- */
+let _rec = null;
+function normTalk(s){ return (s||'').toLowerCase().replace(/[^a-z0-9 ]/g,' ').replace(/\s+/g,' ').trim(); }
+function lev(a,b){
+  const m=a.length,n=b.length;
+  if(m===0) return n; if(n===0) return m;
+  const dp=Array(n+1).fill(0).map((_,i)=>i);
+  for(let i=1;i<=m;i++){
+    let prev=dp[0]; dp[0]=i;
+    for(let j=1;j<=n;j++){
+      const tmp=dp[j];
+      const cost=a[i-1]===b[j-1]?0:1;
+      dp[j]=Math.min(dp[j]+1, dp[j-1]+1, prev+cost);
+      prev=tmp;
+    }
+  }
+  return dp[n];
+}
+function sim(a,b){
+  a=normTalk(a); b=normTalk(b);
+  if(!a||!b) return 0;
+  const d=lev(a,b);
+  const L=Math.max(a.length,b.length);
+  return L?1-d/L:0;
+}
+function spokenMatches(target, spoken){
+  target=normTalk(target); spoken=normTalk(spoken);
+  if(!target||!spoken) return false;
+  if(spoken===target) return true;
+  if(sim(target,spoken) >= 0.72) return true;
+  // composto "red car": accetta se entrambe le parole matchano
+  const tw=target.split(' '), sw=spoken.split(' ');
+  if(tw.length>1){
+    if(tw.every(w=> sw.some(s=> s===w || sim(w,s)>=0.68))) return true;
+    if(sim(target,spoken) >= 0.65) return true;
+  }
+  // se ha detto solo una parte del composto (es. "car" per "red car") -> non basta
+  return false;
+}
+function startQuizVoice(card){
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(!SR){
+    // fallback: mostra e parla
+    const w=$('quizWord'); if(w){ w.classList.remove('hidden'); w.classList.add('revealed'); }
+    speak(cardSpeakText(card));
+    return;
+  }
+  const btn=$('quizVoice');
+  if(_rec){ try{ _rec.abort(); }catch(e){} _rec=null; }
+  const target = cardWord(card);
+  if(btn){ btn.disabled=true; btn.textContent='🎧 Ascolto...'; btn.classList.add('btn-listening'); }
+  const rec = new SR();
+  _rec=rec;
+  rec.lang='en-US';
+  rec.interimResults=false;
+  rec.maxAlternatives=3;
+  rec.continuous=false;
+  let done=false;
+  const timeout=setTimeout(()=>{ try{ rec.abort(); }catch(e){} }, 7000);
+  rec.onresult=(e)=>{
+    if(done) return;
+    const alts=[];
+    for(let i=0;i<e.results.length;i++){
+      for(let j=0;j<e.results[i].length;j++) alts.push(e.results[i][j].transcript);
+    }
+    const heard = alts.join(' ');
+    const ok = alts.some(a=> spokenMatches(target, a)) || spokenMatches(target, heard);
+    done=true;
+    clearTimeout(timeout);
+    _rec=null;
+    if(btn){ btn.disabled=false; btn.textContent='🎤 Parla tu!'; btn.classList.remove('btn-listening'); }
+    if(ok){
+      quizRevealed=true;
+      const w=$('quizWord'); if(w){ w.classList.remove('hidden'); w.classList.add('revealed'); }
+      playGood();
+      speak('Great! ' + cardSpeakText(card));
+      if(navigator.vibrate) try{ navigator.vibrate(40);}catch(e){}
+      setTimeout(()=>{ $('quizActions').innerHTML = `<button class="btn btn-green btn-big" id="quizContinue" type="button">${curIdx===quizSeq.length-1?'Finito! 🎉':'Continua ➡️'}</button>`; $('quizContinue').addEventListener('click', quizContinue); }, 600);
+    } else {
+      playBad();
+      if(btn){ btn.textContent='Quasi! Riprova 🎤'; setTimeout(()=>{ if(btn) btn.textContent='🎤 Parla tu!'; }, 1500); }
+      // suggerimento dolce: pronuncia la parola
+      setTimeout(()=> speak(cardSpeakText(card)), 400);
+    }
+  };
+  rec.onerror=(ev)=>{
+    if(done) return; done=true; clearTimeout(timeout); _rec=null;
+    if(btn){ btn.disabled=false; btn.textContent='🎤 Parla tu!'; btn.classList.remove('btn-listening'); }
+    const err=ev.error||'';
+    if(err==='not-allowed' || err==='service-not-allowed'){
+      alert('Microfono non autorizzato. Consenti il microfono nelle impostazioni del browser e riprova.');
+    } else if(err==='no-speech'){
+      if(btn){ btn.textContent='Non ti ho sentito 🙉'; setTimeout(()=> btn.textContent='🎤 Parla tu!', 1500); }
+    }
+  };
+  rec.onend=()=>{
+    if(done) return;
+    clearTimeout(timeout); _rec=null;
+    if(btn){ btn.disabled=false; btn.textContent='🎤 Parla tu!'; btn.classList.remove('btn-listening'); }
+  };
+  try{ rec.start(); }catch(e){
+    if(btn){ btn.disabled=false; btn.textContent='🎤 Parla tu!'; btn.classList.remove('btn-listening'); }
   }
 }
 
