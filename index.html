@@ -91,10 +91,12 @@
     justify-content:center;font-weight:700;font-size:.85em;box-shadow:var(--shadow);
   }
   .lbadge{
-    position:absolute;top:-8px;right:-8px;background:var(--red);color:#fff;
-    width:30px;height:30px;border-radius:50%;display:flex;align-items:center;
-    justify-content:center;font-size:1em;
+    position:absolute;top:-8px;right:-8px;background:var(--yellow);color:#3e2723;
+    padding:4px 10px;border-radius:999px;display:flex;align-items:center;
+    justify-content:center;font-size:.78em;font-weight:800;box-shadow:var(--shadow);
+    white-space:nowrap;border:2px solid #fff;
   }
+  .lbadge.locked{background:#cfd8dc;color:#607d8b;}
 
   .home-foot{
     text-align:center;color:var(--muted);font-size:.85em;margin-top:18px;
@@ -832,7 +834,7 @@ function renderHome(){
   populateVoiceSelect();
   LEVELS.forEach((lvl, i)=>{
     const locked = !isUnlocked(i), done = isDone(i);
-    const badge = done ? 'Rigioca ✓' : (locked ? '🔒 Bloccato' : 'Gioca ▶');
+    const badge = done ? '✓ Rigioca' : (locked ? '🔒 Bloccato' : '▶ Gioca');
     const el = document.createElement('div');
     el.className = 'level-card' + (locked?' locked':'') + (done?' done':'');
     el.innerHTML = `
@@ -881,6 +883,16 @@ function initLevel(idx){
   if(_gt) _gt.textContent = lvl.icon + ' ' + lvl.title;
   homeEl.classList.remove('show');
   gameEl.classList.add('show');
+  // costruisci i tab Impara / Esercitati / Ascolta
+  const modesBar=$('modesBar');
+  if(modesBar){
+    modesBar.innerHTML = `
+      <button class="mode-btn ${curMode==='learn'?'active':''}" data-mode="learn">📖 Impara</button>
+      <button class="mode-btn ${curMode==='quiz'?'active':''}" data-mode="quiz">🎤 Esercitati</button>
+      <button class="mode-btn ${curMode==='listen'?'active':''}" data-mode="listen">👂 Ascolta</button>
+    `;
+    modesBar.querySelectorAll('.mode-btn').forEach(b=> b.addEventListener('click', ()=> enterMode(b.dataset.mode)) );
+  }
   enterMode('learn');
 }
 
