@@ -141,13 +141,9 @@
   }
 
   .player{
-    width:74px;height:74px;margin:0 auto 16px;border-radius:50%;
-    display:flex;align-items:center;justify-content:center;
-    font-size:2.6em;cursor:pointer;border:4px solid var(--blue);
-    box-shadow:0 6px 20px rgba(30,136,229,.4);
-    animation:popIn .3s ease;
+    display:flex;flex-direction:column;align-items:center;gap:14px;
+    width:100%;padding:6px 0 2px;
   }
-  .player:active{transform:scale(.92)}
 
   .visual{
     display:flex;font-weight:800;color:#1a237e;justify-content:center;
@@ -195,16 +191,16 @@
   /* cifra grande + pallini */
   .numwrap{text-align:center}
   .numwrap .bigdigit{
-    font-size:170px;font-weight:900;line-height:.95;color:#1a237e;
+    font-size:130px;font-weight:900;line-height:.95;color:#1a237e;
     font-family:'Marker Felt','Comic Sans MS',system-ui,sans-serif;
   }
-  .numwrap .bigdigit.bd-sm{font-size:120px}
+  .numwrap .bigdigit.bd-sm{font-size:86px}
   .numwrap .dots{
     display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:8px;max-width:300px;
   }
   .numwrap .dots.big{max-width:340px;gap:6px}
   .numwrap .dots i{
-    width:22px;height:22px;border-radius:50%;background:var(--green);
+    width:18px;height:18px;border-radius:50%;background:var(--green);
     box-shadow:inset -2px -3px 0 rgba(0,0,0,.15);
   }
   .numwrap .dots.big i{width:16px;height:16px}
