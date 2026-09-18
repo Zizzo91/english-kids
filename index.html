@@ -383,7 +383,8 @@
     <div class="level-grid" id="levelGrid"></div>
     <div class="home-foot">
       <span id="homeFoot"></span><br>
-      👨‍👩‍👧 Impara insieme a mamma e papà!
+      👨‍👩‍👧 Impara insieme a mamma e papà!<br>
+      <button class="btn btn-ghost" id="openSettings" style="margin-top:14px">⚙️ Voce e pronuncia</button>
     </div>
   </section>
 
@@ -606,7 +607,7 @@ let learningSeq = [], quizSeq = [], listenSeq = [], listenQ = 0;
 const voiceSupported = typeof (window.SpeechRecognition || window.webkitSpeechRecognition) !== 'undefined';
 
 const $ = id => document.getElementById(id);
-const homeEl = $('home'), gameEl = $('game'), levelGrid = $('levelGrid');
+const homeEl = $('home'), gameEl = $('game'), levelGrid = $('levelGrid'), settingsEl = $('settings');
 const stage = $('stage'), stageHint = $('stageHint');
 const winOverlay = $('winOverlay'), confettiEl = $('confetti');
 
@@ -860,8 +861,16 @@ function showHome(){
   winOverlay.classList.remove('show');
   confettiEl.classList.remove('show'); confettiEl.innerHTML='';
   gameEl.classList.remove('show');
+  if(typeof settingsEl!=='undefined' && settingsEl) settingsEl.classList.remove('show');
   homeEl.classList.add('show');
   renderHome();
+}
+function showSettings(){
+  homeEl.classList.remove('show');
+  gameEl.classList.remove('show');
+  winOverlay.classList.remove('show');
+  settingsEl.classList.add('show');
+  populateVoiceSelect();
 }
 
 /* ============ GAME ============ */
