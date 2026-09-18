@@ -550,6 +550,16 @@ const ITEMS = {
   duck: T('duck', 'duck',   '🦆', '1f986'),
   cow:  T('cow',  'cow',    '🐮', '1f42e'),
   pig:  T('pig',  'pig',    '🐷', '1f437'),
+  sheep:   T('sheep',   'sheep',   '🐑', '1f411'),
+  chicken: T('chicken', 'chicken', '🐔', '1f414'),
+  lion:    T('lion',    'lion',    '🦁', '1f981'),
+  elephant:T('elephant','elephant','🐘', '1f418'),
+  monkey:  T('monkey',  'monkey',  '🐵', '1f435'),
+  bear:    T('bear',    'bear',    '🐻', '1f43b'),
+  frog:    T('frog',    'frog',    '🐸', '1f438'),
+  turtle:  T('turtle',  'turtle',  '🐢', '1f422'),
+  bee:     T('bee',     'bee',     '🐝', '1f41d'),
+  penguin: T('penguin', 'penguin', '🐧', '1f427'),
   // cibo
   apple:   T('apple',   'apple',     '🍎', '1f34e'),
   banana:  T('banana',  'banana',    '🍌', '1f34c'),
@@ -568,6 +578,13 @@ const ITEMS = {
   grandma: T('grandma', 'grandma',   '👵', '1f475'),
   grandpa: T('grandpa', 'grandpa',   '👴', '1f474'),
   family:  T('family',  'family',    '👪', '1f46a'),
+  uncle:   T('uncle',   'uncle',     '🧔', '1f9d4'),
+  aunt:    T('aunt',    'aunt',      '👩‍🦰', '1f469-200d-1f9b0'),
+  cousin:  T('cousin',  'cousin',    '🧒', '1f9d2'),
+  grandson:     T('grandson',     'grandson',     '👦', '1f466'),
+  granddaughter:T('granddaughter','granddaughter','👧', '1f467'),
+  nephew:  T('nephew',  'nephew',    '👦', '1f466'),
+  niece:   T('niece',   'niece',     '👧', '1f467'),
   // oggetti per combinazioni
   car:  T('car',  'car',  '🚗', '1f697'),
 };
@@ -583,9 +600,9 @@ Object.keys(NUM_MAP).forEach(id=>{
 const LEVELS = [
   {icon:'🎨', title:'Colori',  cards:['red','blue','green','yellow','orange','purple','pink','black','gray','brown','lightblue','fuchsia','white','gold','silver','turquoise','lime','navy','coral','lavender','maroon']},
   {icon:'🔢', title:'Numeri',  cards:['one','two','three','four','five','six','seven','eight','nine','ten','eleven','twelve','thirteen','fourteen','fifteen','sixteen','seventeen','eighteen','nineteen','twenty']},
-  {icon:'🐾', title:'Animali', cards:['cat','dog','bird','fish','horse','rabbit','duck','cow']},
+  {icon:'🐾', title:'Animali', cards:['cat','dog','bird','fish','horse','rabbit','duck','cow','pig','sheep','chicken','lion','elephant','monkey','bear','frog','turtle','bee','penguin']},
   {icon:'🍎', title:'Cibo',    cards:['apple','banana','bread','milk','cheese','egg','cake','icecream']},
-  {icon:'👨‍👩', title:'Famiglia', cards:['mom','dad','baby','brother','sister','grandma','grandpa','family']},
+  {icon:'👨‍👩', title:'Famiglia', cards:['mom','dad','baby','brother','sister','grandma','grandpa','family','uncle','aunt','cousin','grandson','granddaughter','nephew','niece']},
   {icon:'🌈', title:'Combinazioni', cards:[
     {t:'compound', a:'red', b:'car'},
     {t:'compound', a:'blue', b:'bird'},
@@ -772,6 +789,13 @@ const PRON = {
   orange: 'OR-inj',
   purple: 'PURR-pull',
   turquoise: 'TURR-kwoyz',
+  uncle: 'UNG-kle',
+  aunt: 'ahnt',
+  cousin: 'KUH-zn',
+  grandson: 'GRAND-son',
+  granddaughter: 'GRAND-daugh-ter',
+  nephew: 'NEF-yoo',
+  niece: 'neess',
 };
 function cardSpeakText(card){
   const w = cardWord(card).toLowerCase();
