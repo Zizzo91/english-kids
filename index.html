@@ -355,14 +355,39 @@
   .hidden{display:none!important}
 
   @media (max-width:560px){
-    .home .hero h1{font-size:2.2em}
-    .level-grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
-    .itemimg{font-size:6em}
-    .numwrap .bigdigit{font-size:130px}
-    .numwrap .bigdigit.bd-sm{font-size:92px}
-    .compound{width:120px;height:96px}
-    .compound .obj{font-size:3.4em}
+    .app{padding:12px 10px 80px}
+    .home .hero h1{font-size:2em}
+    .level-grid{grid-template-columns:1fr 1fr;gap:10px}
+    .level-card{padding:10px 10px 8px}
+    .licon{font-size:1.8em;min-width:48px;height:48px}
+    .ltag{font-size:.95em}
+    .stage-wrap{padding:14px 10px;min-height:auto}
+    .stage-hint{font-size:.92em}
+    .visual{min-height:110px;padding:6px 0}
+    .itemimg{font-size:4.2em}
+    .compound{width:104px;height:84px}
+    .compound .obj{font-size:2.8em}
+    .colorchip{width:84px;height:84px;border-width:5px}
+    .numwrap .bigdigit{font-size:72px}
+    .numwrap .bigdigit.bd-sm{font-size:54px}
+    .numwrap .dots{max-width:180px;gap:5px}
+    .numwrap .dots i{width:12px;height:12px}
+    .numwrap .dots.big i{width:9px;height:9px}
+    .word-badge{font-size:1.15em;padding:8px 14px;max-width:92vw;word-break:break-word}
+    .actions{margin-top:12px}
+    .btn-big{font-size:1em;padding:12px 16px}
+    .voice-row{flex-direction:column}
+    .voice-row .btn{width:100%}
+    .nav-row{gap:8px}
+    .nav-row .btn{font-size:.9em;padding:10px 8px}
+    .topbar .ttl{font-size:1em}
     .vocab-title{font-size:.95em}
+  }
+  @media (max-width:380px){
+    .numwrap .bigdigit{font-size:62px}
+    .numwrap .bigdigit.bd-sm{font-size:48px}
+    .word-badge{font-size:1em}
+    .itemimg{font-size:3.6em}
   }
 
   .fun-title{text-align:center;font-size:1.2em;font-weight:800;color:#1565c0;margin-bottom:4px}
